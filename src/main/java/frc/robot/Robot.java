@@ -4,10 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -24,6 +30,19 @@ public class Robot extends TimesliceRobot {
     // interfere with controllers
     LiveWindow.disableAllTelemetry();
 
+    // Start DataLog for AdvantageScope
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+
+    // Initialize NetworkTables publishers for AdvantageScope
+    NetworkTable driveTable = NetworkTableInstance.getDefault().getTable("Drive");
+    leftSpeedPub = driveTable.getDoubleTopic("LeftSpeed").publish();
+    rightSpeedPub = driveTable.getDoubleTopic("RightSpeed").publish();
+
+    NetworkTable joystickTable = NetworkTableInstance.getDefault().getTable("Joystick");
+    joystickYPub = joystickTable.getDoubleTopic("Y-Axis").publish();
+    joystickXPub = joystickTable.getDoubleTopic("X-Axis").publish();
+
     // Runs for 2 ms after robot periodic functions
     schedule(() -> {}, 0.002);
 
@@ -36,10 +55,16 @@ public class Robot extends TimesliceRobot {
   }
 private Spark leftmotor1 = new Spark(0);
 private Spark leftmotor2 = new Spark(1);
-private Spark rightmotor1 = new Spark(2);  
+private Spark rightmotor1 = new Spark(2);
 private Spark rightmotor2 = new Spark(3);
 
 private Joystick joy1 = new Joystick(0);
+
+// NetworkTables publishers for AdvantageScope
+private DoublePublisher leftSpeedPub;
+private DoublePublisher rightSpeedPub;
+private DoublePublisher joystickYPub;
+private DoublePublisher joystickXPub;
 
   @Override
   public void robotPeriodic() {}
@@ -65,6 +90,18 @@ public void teleopPeriodic() {
   leftmotor2.set(left);
   rightmotor1.set(right);
   rightmotor2.set(right);
+
+  // Publish data to NetworkTables for AdvantageScope
+  leftSpeedPub.set(left);
+  rightSpeedPub.set(right);
+  joystickYPub.set(joy1.getRawAxis(1));
+  joystickXPub.set(joy1.getRawAxis(4));
+
+  // Also publish to SmartDashboard for easy viewing
+  SmartDashboard.putNumber("Left Speed", left);
+  SmartDashboard.putNumber("Right Speed", right);
+  SmartDashboard.putNumber("Joystick Y", joy1.getRawAxis(1));
+  SmartDashboard.putNumber("Joystick X", joy1.getRawAxis(4));
 }
 
 @Override
