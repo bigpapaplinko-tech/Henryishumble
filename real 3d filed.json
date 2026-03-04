@@ -16,27 +16,42 @@
           ]
         },
         "tabs": {
-          "selected": 0,
+          "selected": 1,
           "tabs": [
             {
-              "type": 3,
+              "type": 6,
               "title": "3D Field - Drive Around!",
               "controller": {
-                "sources": [
-                  {
-                    "key": "NT:/SmartDashboard/Field/Robot",
-                    "color": "#ff0000",
-                    "alliance": "blue"
-                  }
-                ],
+                "sources": [],
+                "timeRange": "visible",
+                "rangeMin": 0,
+                "rangeMax": 10,
+                "stepSize": 1
+              },
+              "renderer": null,
+              "controlsHeight": null
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [],
                 "game": "FRC:2026 Field"
               },
-              "controllerUUID": "drivetrain3dfield",
+              "controllerUUID": "p4qk6fedbrn3j3dvlxl6u9ve3gnfp8p8",
               "renderer": {
                 "cameraIndex": -1,
                 "orbitFov": 50,
-                "cameraPosition": [0, 6, -12],
-                "cameraTarget": [0, 0.5, 0]
+                "cameraPosition": [
+                  1.4695761589768238e-15,
+                  5.999999999999999,
+                  -12
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
               },
               "controlsHeight": 200
             },
@@ -44,22 +59,10 @@
               "type": 1,
               "title": "Motor Speeds",
               "controller": {
-                "leftSources": [
-                  {
-                    "key": "NT:/Drive/LeftSpeed",
-                    "color": "#2b66a2"
-                  },
-                  {
-                    "key": "NT:/Drive/RightSpeed",
-                    "color": "#e5b31b"
-                  }
-                ],
+                "leftSources": [],
                 "rightSources": [],
                 "discreteSources": [],
-                "leftLockedRange": {
-                  "min": -1,
-                  "max": 1
-                },
+                "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
                   "autoTarget": null,
@@ -78,22 +81,10 @@
               "type": 1,
               "title": "Joystick Inputs",
               "controller": {
-                "leftSources": [
-                  {
-                    "key": "NT:/Joystick/Y-Axis",
-                    "color": "#d62728"
-                  },
-                  {
-                    "key": "NT:/Joystick/X-Axis",
-                    "color": "#9467bd"
-                  }
-                ],
+                "leftSources": [],
                 "rightSources": [],
                 "discreteSources": [],
-                "leftLockedRange": {
-                  "min": -1,
-                  "max": 1
-                },
+                "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
                   "autoTarget": null,
@@ -112,22 +103,8 @@
               "type": 1,
               "title": "Robot Position",
               "controller": {
-                "leftSources": [
-                  {
-                    "key": "NT:/SmartDashboard/Pose X",
-                    "color": "#ff7f0e"
-                  },
-                  {
-                    "key": "NT:/SmartDashboard/Pose Y",
-                    "color": "#2ca02c"
-                  }
-                ],
-                "rightSources": [
-                  {
-                    "key": "NT:/SmartDashboard/Pose Rotation",
-                    "color": "#d62728"
-                  }
-                ],
+                "leftSources": [],
+                "rightSources": [],
                 "discreteSources": [],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
@@ -136,7 +113,7 @@
                   "preset": null
                 },
                 "rightUnitConversion": {
-                  "autoTarget": "rotation",
+                  "autoTarget": null,
                   "preset": null
                 },
                 "leftFilter": 0,

@@ -11,8 +11,18 @@ import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 
 /**
@@ -34,6 +44,20 @@ public class Robot extends TimesliceRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
+    // Initialize odometry and simulation
+    odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0, new Pose2d());
+
+    // Create drivetrain simulation (Kitbot with CIM motors, standard gearing, 6" wheels)
+    driveSim = DifferentialDrivetrainSim.createKitbotSim(
+      KitbotMotor.kDualCIMPerSide,
+      KitbotGearing.k10p71,
+      KitbotWheelSize.kSixInch,
+      null
+    );
+
+    // Send field to SmartDashboard for AdvantageScope
+    SmartDashboard.putData("Field", field);
+
     // Initialize NetworkTables publishers for AdvantageScope
     NetworkTable driveTable = NetworkTableInstance.getDefault().getTable("Drive");
     leftSpeedPub = driveTable.getDoubleTopic("LeftSpeed").publish();
@@ -42,6 +66,10 @@ public class Robot extends TimesliceRobot {
     NetworkTable joystickTable = NetworkTableInstance.getDefault().getTable("Joystick");
     joystickYPub = joystickTable.getDoubleTopic("Y-Axis").publish();
     joystickXPub = joystickTable.getDoubleTopic("X-Axis").publish();
+
+    // Publish pose using modern struct format for AdvantageScope 3D field
+    posePub = NetworkTableInstance.getDefault()
+      .getStructTopic("SmartDashboard/Field/Robot", Pose2d.struct).publish();
 
     // Runs for 2 ms after robot periodic functions
     schedule(() -> {}, 0.002);
@@ -60,14 +88,47 @@ private Spark rightmotor2 = new Spark(3);
 
 private Joystick joy1 = new Joystick(0);
 
+// Field and odometry for 3D visualization
+private Field2d field = new Field2d();
+private DifferentialDriveOdometry odometry;
+private DifferentialDrivetrainSim driveSim;
+private Pose2d pose = new Pose2d();
+private double leftDistance = 0.0;
+private double rightDistance = 0.0;
+
 // NetworkTables publishers for AdvantageScope
 private DoublePublisher leftSpeedPub;
 private DoublePublisher rightSpeedPub;
 private DoublePublisher joystickYPub;
 private DoublePublisher joystickXPub;
+private StructPublisher<Pose2d> posePub;
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    // Update simulation (converts motor voltages to position changes)
+    driveSim.setInputs(
+      leftmotor1.get() * 12.0,  // Convert -1 to 1 range to voltage
+      rightmotor1.get() * 12.0
+    );
+    driveSim.update(0.02);  // 20ms update period
+
+    // Get simulated wheel positions
+    leftDistance = driveSim.getLeftPositionMeters();
+    rightDistance = driveSim.getRightPositionMeters();
+
+    // Update odometry with simulated heading and wheel positions
+    pose = odometry.update(
+      driveSim.getHeading(),
+      leftDistance,
+      rightDistance
+    );
+
+    // Update field widget
+    field.setRobotPose(pose);
+
+    // Publish pose to NetworkTables for AdvantageScope 3D field (modern struct format)
+    posePub.set(pose);
+  }
 
   @Override
   public void autonomousInit() {}
@@ -102,6 +163,9 @@ public void teleopPeriodic() {
   SmartDashboard.putNumber("Right Speed", right);
   SmartDashboard.putNumber("Joystick Y", joy1.getRawAxis(1));
   SmartDashboard.putNumber("Joystick X", joy1.getRawAxis(4));
+  SmartDashboard.putNumber("Pose X", pose.getX());
+  SmartDashboard.putNumber("Pose Y", pose.getY());
+  SmartDashboard.putNumber("Pose Rotation", pose.getRotation().getDegrees());
 }
 
 @Override
