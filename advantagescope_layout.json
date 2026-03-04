@@ -1,0 +1,111 @@
+{
+  "hubs": [
+    {
+      "x": 0,
+      "y": 43,
+      "width": 1710,
+      "height": 1016,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": [
+            "/Drive",
+            "/Joystick",
+            "/SmartDashboard"
+          ]
+        },
+        "tabs": {
+          "selected": 0,
+          "tabs": [
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": {
+                    "min": -1,
+                    "max": 1
+                  },
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "NT:/Drive/LeftSpeed",
+                      "color": "#2b66a2",
+                      "show": true
+                    },
+                    {
+                      "key": "NT:/Drive/RightSpeed",
+                      "color": "#e5b31b",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Motor Speeds"
+            },
+            {
+              "type": 1,
+              "legendHeight": 0.3,
+              "legends": {
+                "left": {
+                  "lockedRange": {
+                    "min": -1,
+                    "max": 1
+                  },
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": [
+                    {
+                      "key": "NT:/Joystick/Y-Axis",
+                      "color": "#d62728",
+                      "show": true
+                    },
+                    {
+                      "key": "NT:/Joystick/X-Axis",
+                      "color": "#9467bd",
+                      "show": true
+                    }
+                  ]
+                },
+                "discrete": {
+                  "fields": []
+                },
+                "right": {
+                  "lockedRange": null,
+                  "unitConversion": {
+                    "type": null,
+                    "factor": 1
+                  },
+                  "fields": []
+                }
+              },
+              "title": "Joystick Inputs"
+            },
+            {
+              "type": 10,
+              "title": "NetworkTables"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "3.2.1"
+}
